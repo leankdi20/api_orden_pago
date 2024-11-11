@@ -1,0 +1,167 @@
+version: "3.9"
+
+
+
+services:
+
+  # Django app
+
+  app:
+
+    build:
+
+      context: .
+
+    ports:
+
+      - 8000:8000
+
+    volumes:
+
+      - ./app:/app 
+
+    command: >
+      sh -c "python manage.py migrate &&
+              python manage.py collectstatic --no-input &&
+              python manage.py runserver 0.0.0.0:8000"
+
+
+    environment:
+
+      - DEBUG=1
+
+    env_file:
+
+      - ./.env
+
+    container_name: django_app_api_orden_pago
+
+    depends_on:
+
+      - db
+
+ 
+
+  # Database
+
+  db:
+
+    image: mysql:8
+
+    volumes:
+
+      - ./database/lib:/var/lib/mysql
+
+    env_file:
+
+      - ./.env
+
+    container_name: mysql_db_api_orden_pago
+
+    ports:
+
+      - 3306:3306
+
+    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci','--log-error-verbosity=1']
+
+ 
+
+  # Redis
+
+  redis-api_orden_pago:
+
+    image: redis:alpine
+
+    container_name: redis-api_orden_pago
+
+    command: >
+
+          --bind 0.0.0.0 --requirepass ${REDIS_PASSWORD}
+
+    ports:
+
+      - 6379:6379
+
+ 
+
+  # Celery default
+
+  # celery-api_orden_pago:
+
+  #   restart: always
+
+  #   build:
+
+  #     context: .
+
+  #   command: celery -A api_orden_pago worker -Q default -c 2 -n workerDefault@%%h -l INFO --purge
+
+  #   volumes:
+
+  #     - ./app:/app
+
+  #   env_file:
+
+  #     - ./.env
+
+  #   container_name: celery-api_orden_pago
+
+  #   depends_on:
+
+  #     - db
+
+  #     - redis-api_orden_pago
+
+  #     - app
+
+
+
+  #Celery Beat
+
+  # celery-beat-api_orden_pago:
+
+  #   build:
+
+  #     context: .
+
+  #   command: celery -A api_orden_pago beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+
+  #   volumes:
+
+  #     - ./app:/app
+
+  #   env_file:
+
+  #     - ./.env
+
+  #   container_name: celery-beat-api_orden_pago
+
+  #   depends_on:
+
+  #     - db
+
+  #     - redis-api_orden_pago
+
+  #     - app
+
+  #     - celery-api_orden_pago
+
+
+
+  # flower-api_orden_pago:
+
+  #   image: mher/flower:0.9.5
+
+  #   env_file:
+
+  #     - ./.env
+
+  #   command: ['flower','--broker=redis://:${REDIS_PASSWORD}@redis-api_orden_pago:6379','--port=5555']
+
+  #   ports:
+
+  #     - 5557:5555
+
+  #   depends_on:
+
+  #     - redis-api_orden_pago

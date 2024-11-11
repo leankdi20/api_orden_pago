@@ -1,0 +1,108 @@
+version: "3.9"
+
+services:
+
+  # Django app
+  app:
+    build:
+      context: .
+    ports:
+      - 8000:8000
+    volumes:
+      - ./app:/app 
+      - ./staticfiles:/app/staticfiles
+    command: >
+      sh -c "python manage.py migrate &&
+              python manage.py collectstatic --no-input &&
+              gunicorn --bind 0.0.0.0:8000 --limit-request-line 8190 app.wsgi"
+
+    environment:
+      - DEBUG=0
+    env_file:
+      - ./.env
+    container_name: django_app_api_orden_pago
+    depends_on: 
+      - db
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.app-http.rule=Host(`localhost`)
+      - traefik.http.routers.app-http.tls=true
+      - traefik.http.routers.app-http.tls.certresolver=letsencrypt
+  
+  # Database
+  db:
+    image: mysql:8
+    restart: always
+    volumes:
+      - ./database/lib:/var/lib/mysql
+    env_file:
+      - ./.env
+    container_name: mysql_db_api_orden_pago
+    ports:
+      - 3306:3306
+    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci','--log-error-verbosity=1']
+  
+  # # Redis
+  # redis-api_orden_pago:
+  #   image: redis:alpine
+  #   container_name: redis-api_orden_pago
+  #   command: >
+  #         --bind 0.0.0.0 --requirepass ${REDIS_PASSWORD}
+  #   ports:
+  #     - 6379:6379
+
+  # Celery default
+  celery-api_orden_pago:
+    restart: always
+    build:
+      context: .
+    command: celery -A api_orden_pago worker -Q default -c 2 -n workerDefault@%%h -l INFO --purge
+    volumes:
+      - ./app:/app
+    env_file:
+      - ./.env
+    container_name: celery-api_orden_pago
+    depends_on: 
+      - db
+      - redis-api_orden_pago
+      - app
+  
+  # #Celery Beat
+  # celery-beat-api_orden_pago:
+  #   build:
+  #     context: .
+  #   command: celery -A app beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+  #   volumes:
+  #     - ./app:/app
+  #   env_file:
+  #     - ./.env
+  #   container_name: celery-beat-api_orden_pago
+  #   depends_on:
+  #     - db
+  #     - redis-api_orden_pago
+  #     - app
+  #     - celery-api_orden_pago
+  
+  # flower-oapi_orden_pago:
+  #   image: mher/flower:0.9.5
+  #   env_file:
+  #     - ./.env
+  #   command: ['flower','--broker=redis://:${REDIS_PASSWORD}@redis-api_orden_pago:6379','--port=5555']
+  #   ports:
+  #     - 5557:5555
+  #   depends_on:
+  #     - redis-api_orden_pago
+  
+  traefik:
+    image: traefik:v2.3
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/traefik.toml:/etc/traefik/traefik.toml
+      - traefik-public-certificates:/certificates
+
+volumes:
+  traefik-public-certificates:
