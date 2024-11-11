@@ -52,20 +52,20 @@ services:
   #     - 6379:6379
 
   # Celery default
-  celery-api_orden_pago:
-    restart: always
-    build:
-      context: .
-    command: celery -A api_orden_pago worker -Q default -c 2 -n workerDefault@%%h -l INFO --purge
-    volumes:
-      - ./app:/app
-    env_file:
-      - ./.env
-    container_name: celery-api_orden_pago
-    depends_on: 
-      - db
-      - redis-api_orden_pago
-      - app
+  # celery-api_orden_pago:
+  #   restart: always
+  #   build:
+  #     context: .
+  #   command: celery -A api_orden_pago worker -Q default -c 2 -n workerDefault@%%h -l INFO --purge
+  #   volumes:
+  #     - ./app:/app
+  #   env_file:
+  #     - ./.env
+  #   container_name: celery-api_orden_pago
+  #   depends_on: 
+  #     - db
+  #     - redis-api_orden_pago
+  #     - app
   
   # #Celery Beat
   # celery-beat-api_orden_pago:
