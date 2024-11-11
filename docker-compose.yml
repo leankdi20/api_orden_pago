@@ -21,8 +21,9 @@ services:
     env_file:
       - ./.env
     container_name: django_app_api_orden_pago
-    depends_on: 
-      - db
+    depends_on:
+      db:
+        condition: service_healthy
     # labels:
     #   - traefik.enable=true
     #   - traefik.http.routers.app-http.rule=Host(`crapipago.cloud`)
@@ -40,7 +41,16 @@ services:
     container_name: mysql_db_api_orden_pago
     ports:
       - 3306:3306
-    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci','--log-error-verbosity=1']
+    command: [
+      '--character-set-server=utf8mb4', 
+      '--collation-server=utf8mb4_unicode_ci',
+      '--log-error-verbosity=1'
+    ]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   
   # # Redis
   # redis-api_orden_pago:
