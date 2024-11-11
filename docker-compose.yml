@@ -14,7 +14,7 @@ services:
     command: >
       sh -c "python manage.py migrate &&
               python manage.py collectstatic --no-input &&
-              gunicorn --bind 0.0.0.0:8000 --limit-request-line 8190 app.wsgi"
+              gunicorn --bind 0.0.0.0:8000 --limit-request-line 8190 api_orden_pago.wsgi"
 
     environment:
       - DEBUG=0
