@@ -94,6 +94,7 @@ class Bitacora(models.Model):
     valor_despues = models.CharField(max_length=100)
     fecha_movimiento = models.DateField(auto_now_add=True)
     transaccion = models.CharField(max_length=100)
+    fecha_movimiento = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return f"Bitacora {self.id} - {self.tabla}"
