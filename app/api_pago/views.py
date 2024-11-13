@@ -4,6 +4,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework import status
 from django.utils import timezone
 from datetime import timedelta
 
@@ -17,7 +18,8 @@ from .serializers import (
     EstadoPagoSerializer,
     TipoPagoSerializer,
     TipoDevolucionSerializer,
-    OrdenesPagoReadSerializer
+    OrdenesPagoReadSerializer,
+    UsuarioCredencialesSerializer
 )
 
 from drf_spectacular.utils import extend_schema, extend_schema_view
@@ -142,3 +144,28 @@ class TipoDevolucionViewSet(viewsets.ModelViewSet):
     serializer_class = TipoDevolucionSerializer
     # authentication_classes = [TokenAuthentication]
     # permission_classes = [IsAuthenticated]
+
+
+
+#Vista de un usuario 
+class UsuarioReadViewSet(viewsets.ModelViewSet):
+    queryset = Usuario.objects.all()
+    serializer_class = UsuarioSerializer
+
+    def get_queryset(self):
+        correo = self.request.query_params.get('correo')
+        if correo:
+            return Usuario.objects.filter(correo=correo)
+        return super().get_queryset()
+
+    @action(detail=False, methods=['get'], url_path='credenciales')
+    def credenciales(self, request):
+        correo = request.query_params.get('correo')
+        if correo:
+            try:
+                usuario = Usuario.objects.get(correo=correo)
+                serializer = UsuarioCredencialesSerializer(usuario)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except Usuario.DoesNotExist:
+                return Response({'error': 'Usuario no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Correo no proporcionado'}, status=status.HTTP_400_BAD_REQUEST)

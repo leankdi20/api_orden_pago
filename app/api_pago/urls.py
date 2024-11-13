@@ -4,6 +4,7 @@ from . import views
 from django.contrib import admin
 
 router = DefaultRouter()
+router.register(r'usuarios-contraseña', views.UsuarioReadViewSet)
 router.register(r'usuarios', views.UsuarioViewSet)
 router.register(r'roles', views.RolViewSet)
 router.register(r'ordenes_pago', views.OrdenesPagoViewSet)

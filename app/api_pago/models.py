@@ -12,11 +12,11 @@ class Rol(models.Model):
 
 #Clase Usuario
 class Usuario(models.Model):
-    cedula = models.IntegerField(unique=True)
+    cedula = models.BigIntegerField(unique=True)
     nombre = models.CharField(max_length=100)
     primer_apellido = models.CharField(max_length=100)
     segundo_apellido = models.CharField(max_length=100)
-    estado = models.CharField(max_length=100, unique=True)
+    estado = models.CharField(max_length=100)
     correo = models.EmailField(max_length=100)
     contrasena = models.CharField(max_length=100)
     fecha_creacion = models.DateField(auto_now_add=True)
