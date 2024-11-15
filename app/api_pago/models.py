@@ -12,13 +12,13 @@ class Rol(models.Model):
 
 #Clase Usuario
 class Usuario(models.Model):
-    cedula = models.BigIntegerField(unique=True)
-    nombre = models.CharField(max_length=100)
-    primer_apellido = models.CharField(max_length=100)
-    segundo_apellido = models.CharField(max_length=100)
-    estado = models.CharField(max_length=100)
-    correo = models.EmailField(max_length=100)
-    contrasena = models.CharField(max_length=100)
+    cedula = models.BigIntegerField(unique=True, null=True)
+    nombre = models.CharField(max_length=100, null=True)
+    primer_apellido = models.CharField(max_length=100, null=True)
+    segundo_apellido = models.CharField(max_length=100, null=True)
+    estado = models.CharField(max_length=100, null=True)
+    correo = models.EmailField(max_length=100, null=True)
+    contrasena = models.CharField(max_length=100, null=True)
     fecha_creacion = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     id_rol = models.ForeignKey(Rol, on_delete=models.CASCADE, related_name='rol')
@@ -35,8 +35,8 @@ class EstadoPago(models.Model):
 
 #Clase TipoPago
 class TipoPago(models.Model):
-    descripcion = models.CharField(max_length=100)
-    sigla = models.CharField(max_length=20)
+    descripcion = models.CharField(max_length=100, null=True)
+    sigla = models.CharField(max_length=20, null=True)
 
     def __str__(self):
         return self.descripcion
@@ -46,7 +46,7 @@ class TipoPago(models.Model):
 class OrdenesPago(models.Model):
     fecha_de_ingreso = models.DateField(auto_now_add=True)
     acreedor = models.CharField(max_length=100, null=True)
-    factura = models.CharField(max_length=100, null=True)
+    factura = models.CharField(max_length=100, null=True, unique=True)
     monto = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     descuento = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     impuesto = models.DecimalField(max_digits=10, decimal_places=2, null=True)
@@ -67,17 +67,17 @@ class OrdenesPago(models.Model):
     
 #Clase TipoDevolucion
 class TipoDevolucion(models.Model):
-    descripcion = models.CharField(max_length=100)
-    estado = models.CharField(max_length=100)
+    descripcion = models.CharField(max_length=100,null=True)
+    estado = models.CharField(max_length=100, null=True)
 
     def __str__(self):
         return self.descripcion
     
 #Clase Devoluciones
 class Devoluciones(models.Model):
-    descripcion = models.CharField(max_length=100)
+    descripcion = models.CharField(max_length=100, null=True)
     fecha_devolucion = models.DateField(auto_now_add=True) 
-    cedula_usuario_devolucion = models.IntegerField()
+    cedula_usuario_devolucion = models.BigIntegerField(null=True)
     id_tipo_devolucion = models.ForeignKey(TipoDevolucion, on_delete=models.CASCADE, related_name='tipo_devolucion')
     id_orden_pago = models.ForeignKey(OrdenesPago, on_delete=models.CASCADE, related_name='orden_pago')
     id_analista = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='analista_devolucion')
@@ -88,10 +88,10 @@ class Devoluciones(models.Model):
 #Clase Bitacora
 class Bitacora(models.Model):
     id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='usuario')
-    tabla = models.CharField(max_length=100)
-    columna = models.CharField(max_length=100)
-    valor_anterior = models.CharField(max_length=100)
-    valor_despues = models.CharField(max_length=100)
+    tabla = models.CharField(max_length=100, null=True)
+    columna = models.CharField(max_length=100, null=True)
+    valor_anterior = models.CharField(max_length=100, null=True)
+    valor_despues = models.CharField(max_length=100, null=True)
     fecha_movimiento = models.DateField(auto_now_add=True)
     transaccion = models.CharField(max_length=100)
     fecha_movimiento = models.DateField(auto_now_add=True)

@@ -37,7 +37,7 @@ class OrdenesPagoSerializer(serializers.ModelSerializer):
 
 class OrdenesPagoReadSerializer(serializers.ModelSerializer):
     id_estado_pago = EstadoPagoSerializer(many=False, required=True)
-    id_coordinarod = UsuarioSerializer(many=False, required=True)
+    id_coordinador = UsuarioSerializer(many=False, required=True)
     id_tipo_pago = TipoPagoSerializer(many=False, required=True)
     id_analista = UsuarioSerializer(many=False, required=True)
 
