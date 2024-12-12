@@ -4,7 +4,7 @@ from django.db import models
 
 #Clase Rol
 class Rol(models.Model):
-    nombre_rol = models.CharField(max_length=50)
+    nombre_rol = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
         return self.nombre_rol
