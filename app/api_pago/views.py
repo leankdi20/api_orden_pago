@@ -74,6 +74,22 @@ class OrdenesPagoViewSet(viewsets.ModelViewSet):
 
         return query
     
+    @action(detail=True, methods=['patch'])
+    def actualizar_estado_pago(self, request, pk=None):
+        orden_pago = self.get_object()  # Obtén el objeto OrdenPago con el pk de la URL
+
+        # Extrae el nuevo estado de pago de la solicitud
+        id_estado_pago = request.data.get('id_estado_pago')
+
+        if id_estado_pago:
+            try:
+                estado_pago = EstadoPago.objects.get(id=id_estado_pago)
+                orden_pago.id_estado_pago = estado_pago
+                orden_pago.save()  
+                return Response({"message": "Estado de pago actualizado"}, status=status.HTTP_200_OK)
+            except EstadoPago.DoesNotExist:
+                return Response({"error": "Estado de pago no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"error": "id_estado_pago no proporcionado"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class OrdenesPagoVer(mixins.RetrieveModelMixin, mixins.ListModelMixin , viewsets.GenericViewSet):
