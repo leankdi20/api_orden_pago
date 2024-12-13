@@ -77,7 +77,7 @@ class TipoDevolucion(models.Model):
 class Devoluciones(models.Model):
     descripcion = models.CharField(max_length=100, null=True)
     fecha_devolucion = models.DateField(auto_now_add=True) 
-    cedula_usuario_devolucion = models.BigIntegerField(null=True)
+    Acreedor = models.CharField(max_length=100, null=True)
     id_tipo_devolucion = models.ForeignKey(TipoDevolucion, on_delete=models.CASCADE, related_name='tipo_devolucion')
     id_orden_pago = models.ForeignKey(OrdenesPago, on_delete=models.CASCADE, related_name='orden_pago')
     id_analista = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='analista_devolucion')
