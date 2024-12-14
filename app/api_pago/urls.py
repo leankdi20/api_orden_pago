@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 from . import views
 from django.contrib import admin
 
+
 router = DefaultRouter()
 router.register(r'usuarios-contraseña', views.UsuarioReadViewSet)
 router.register(r'usuarios', views.UsuarioViewSet)
@@ -20,4 +21,5 @@ app_name = 'api_pago'
 urlpatterns = [
     #path('', include(router.urls)),
     path('', include(router.urls)),
+    path('test-error/', views.test_error, name='test_error'),  # Ruta de prueba
 ]

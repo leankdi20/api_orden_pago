@@ -35,6 +35,14 @@ if(ALLOWED_HOSTS_ENV):
 CORS_ALLOW_ALL_ORIGINS = True
 
 
+# Permitir conexiones desde localhost y 127.0.0.1
+ALLOWED_HOSTS.append('localhost')
+ALLOWED_HOSTS.append('127.0.0.1')
+
+# Permitir 0.0.0.0 para conexiones de prueba, pero no en producción
+if DEBUG:  # Solo si estás en modo de desarrollo (DEBUG=True)
+    ALLOWED_HOSTS.append('0.0.0.0')
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -59,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'api_orden_pago.middleware.ProcessExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'api_orden_pago.urls'
@@ -150,6 +159,25 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework_datatables.pagination.DatatablesPageNumberPagination',
     'PAGE_SIZE': 50,
 }
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'file': {
+#             'level': 'ERROR',  # Guarda los logs de nivel ERROR y superiores
+#             'class': 'logging.FileHandler',
+#             'filename': '/webapps/api_orden_pago/logs/error.log',  # Asegúrate de que esta carpeta exista
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['file'],
+#             'level': 'ERROR',  # Puedes cambiar el nivel según lo que necesites
+#             'propagate': True,
+#         },
+#     },
+# }
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

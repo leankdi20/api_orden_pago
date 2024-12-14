@@ -7,6 +7,7 @@ from rest_framework.decorators import action
 from rest_framework import status
 from django.utils import timezone
 from datetime import timedelta
+from django.http import HttpResponse
 
 from .models import Usuario, Rol, OrdenesPago, Devoluciones, Bitacora, EstadoPago, TipoPago, TipoDevolucion
 from .serializers import (
@@ -25,6 +26,12 @@ from .serializers import (
 from drf_spectacular.utils import extend_schema, extend_schema_view
 
 # Create your views here.
+def test_error(request):
+    # Esta línea genera un error deliberado
+    raise Exception("Este es un error de prueba para enviar a Slack.")
+    return HttpResponse("Todo está bien.")
+
+
 class UsuarioViewSet(viewsets.ModelViewSet):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer

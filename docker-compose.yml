@@ -18,6 +18,7 @@ services:
 
     environment:
       - DEBUG=0
+      - SLACK_TOKEN=xoxe-1-My0xLTgxNjgwNjcwODQ0MDYtODE2ODA4NjU3MzE1OC04MTk3NTQwMTA1OTg0LTRhZmI1ZTBjM2JjOTkwYTE2YzI0Y2RhYWYwYTZlZGYzMmI4NTFhOGRkMjc4ZDg0MzQxY2I4ODJkMzIyZmJiNjE
     env_file:
       - ./.env
     container_name: django_app_api_orden_pago
