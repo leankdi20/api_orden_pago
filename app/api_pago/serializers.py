@@ -80,4 +80,4 @@ class BitacoraSerializer(serializers.ModelSerializer):
 class UsuarioCredencialesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
-        fields = ['nombre', 'contrasena']
+        fields = '__all__'
