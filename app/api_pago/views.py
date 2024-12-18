@@ -97,6 +97,21 @@ class OrdenesPagoViewSet(viewsets.ModelViewSet):
             except EstadoPago.DoesNotExist:
                 return Response({"error": "Estado de pago no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         return Response({"error": "id_estado_pago no proporcionado"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def registrar_bitacora(self, objeto, campo_modificado, valor_anterior, valor_nuevo, transaccion,id_usuario):
+        """
+        Registra el cambio de un objeto en la bitácora.
+        """
+        bitacora = Bitacora(
+            id_usuario=id_usuario,  # Suponiendo que el usuario está autenticado
+            tabla=objeto.__class__.__name__,  # Nombre de la clase (tabla)
+            columna=campo_modificado,  # El campo que fue modificado
+            valor_anterior=valor_anterior,  # El valor anterior
+            valor_despues=valor_nuevo,  # El valor después del cambio
+            transaccion=transaccion,  # El tipo de transacción (INSERT, UPDATE, DELETE)
+            fecha_movimiento=timezone.now()  # La fecha de la modificación
+        )
+        bitacora.save()
 
 
 class OrdenesPagoVer(mixins.RetrieveModelMixin, mixins.ListModelMixin , viewsets.GenericViewSet):
