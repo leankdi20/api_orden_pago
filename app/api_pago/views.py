@@ -103,13 +103,13 @@ class OrdenesPagoViewSet(viewsets.ModelViewSet):
         Registra el cambio de un objeto en la bitácora.
         """
         bitacora = Bitacora(
-            id_usuario=id_usuario,  # Suponiendo que el usuario está autenticado
-            tabla=objeto.__class__.__name__,  # Nombre de la clase (tabla)
-            columna=campo_modificado,  # El campo que fue modificado
-            valor_anterior=valor_anterior,  # El valor anterior
-            valor_despues=valor_nuevo,  # El valor después del cambio
-            transaccion=transaccion,  # El tipo de transacción (INSERT, UPDATE, DELETE)
-            fecha_movimiento=timezone.now()  # La fecha de la modificación
+            id_usuario=id_usuario, 
+            tabla=objeto.__class__.__name__, 
+            columna=campo_modificado,  
+            valor_anterior=valor_anterior, 
+            valor_despues=valor_nuevo,  
+            transaccion=transaccion, 
+            fecha_movimiento=timezone.now()  
         )
         bitacora.save()
 
